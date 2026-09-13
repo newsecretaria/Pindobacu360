@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsroom GTA VI</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23FF7A3D'/%3E%3Ctext x='16' y='22' font-family='Impact,Arial Narrow' font-size='17' text-anchor='middle' fill='%230D1120'%3EVI%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="wire">
+  <div class="wire__label">NO FIO</div>
+  <div class="wire__track"><div class="wire__inner" id="wire"><span class="wire__empty">Aguardando a primeira leitura das fontes…</span></div></div>
+</div>
+
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <div class="brand__kicker">REDAÇÃO LOCAL</div>
+      <div class="brand__name">NEWSROOM <span>GTA VI</span></div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="nav__btn is-active" data-view="radar">Radar <span class="nav__count" id="n-radar">0</span></button>
+      <button class="nav__btn" data-view="pautas">Pautas <span class="nav__count" id="n-pautas">0</span></button>
+      <button class="nav__btn" data-view="fontes">Fontes</button>
+      <button class="nav__btn" data-view="ajustes">Ajustes</button>
+    </nav>
+    <div class="rail__foot">
+      <b>Regra da casa:</b> nada sai sem revisão. Trecho de trailer curto, roteiro seu, rumor sempre marcado como rumor.
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="status" id="status"></div>
+      <button class="chip chip--btn" id="btn-refresh" title="Ler todas as fontes agora">↻ <span>Ler fontes agora</span></button>
+    </div>
+
+    <!-- ===================== RADAR ===================== -->
+    <section class="view is-active" id="view-radar">
+      <div class="view__head">
+        <div><div class="view__title">RADAR</div><div class="view__sub" id="radar-sub">Tudo que apareceu nas fontes, mais novo primeiro.</div></div>
+        <div class="toolbar">
+          <div class="tiers" id="tiers">
+            <button class="tier-chip is-active" data-tier="">Tudo</button>
+            <button class="tier-chip" data-tier="oficial"><span class="dot t-oficial"></span>Oficial</button>
+            <button class="tier-chip" data-tier="imprensa"><span class="dot t-imprensa"></span>Imprensa</button>
+            <button class="tier-chip" data-tier="fa"><span class="dot t-fa"></span>Comunidade</button>
+          </div>
+          <input class="input search" id="q" placeholder="Buscar no radar…">
+          <button class="btn" id="btn-manual">+ Pauta manual</button>
+        </div>
+      </div>
+      <div class="feed" id="feed"></div>
+    </section>
+
+    <!-- ===================== PAUTAS ===================== -->
+    <section class="view" id="view-pautas">
+      <div class="view__head">
+        <div><div class="view__title">PAUTAS</div><div class="view__sub">Clique numa pauta para trabalhar nela: roteiro → voz → vídeo → publicar.</div></div>
+      </div>
+      <div class="board" id="board"></div>
+    </section>
+
+    <!-- ===================== FONTES ===================== -->
+    <section class="view" id="view-fontes">
+      <div class="view__head">
+        <div><div class="view__title">FONTES</div><div class="view__sub">Verde é primeira mão. Amarelo é imprensa. Vermelho é comunidade — entra como rumor.</div></div>
+      </div>
+      <div class="panel">
+        <h3>Adicionar fonte <small>RSS ou canal do YouTube (cole a URL do canal, ex: youtube.com/@rockstargames)</small></h3>
+        <div class="grid-3">
+          <input class="input" id="src-nome" placeholder="Nome">
+          <input class="input" id="src-url" placeholder="https://…">
+          <select class="input" id="src-tipo"><option value="rss">RSS</option><option value="youtube">YouTube</option></select>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <select class="input" id="src-tier" style="width:auto"><option value="oficial">Oficial</option><option value="imprensa" selected>Imprensa</option><option value="fa">Comunidade</option></select>
+          <label class="switch"><input type="checkbox" id="src-filtrar" checked> Só guardar o que bate nas palavras-chave</label>
+          <button class="btn btn--primary" id="btn-add-src">Adicionar</button>
+        </div>
+      </div>
+      <div style="height:14px"></div>
+      <table class="table" id="src-table"><thead><tr><th>Ativa</th><th>Fonte</th><th>Classe</th><th>Filtro</th><th>Última leitura</th><th></th></tr></thead><tbody></tbody></table>
+    </section>
+
+    <!-- ===================== AJUSTES ===================== -->
+    <section class="view" id="view-ajustes">
+      <div class="view__head">
+        <div><div class="view__title">AJUSTES</div><div class="view__sub">Chaves ficam só neste computador, em config/settings.json.</div></div>
+        <button class="btn btn--primary" id="btn-save">Salvar ajustes</button>
+      </div>
+
+      <div class="panel">
+        <h3>Canal</h3>
+        <div class="grid-2">
+          <div class="field"><label>Nome do canal</label><input class="input" data-k="canal_nome"></div>
+          <div class="field"><label>Handle (aparece no rodapé do vídeo)</label><input class="input" data-k="canal_handle" placeholder="@seucanal"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <div id="yt-status" class="chip"><span class="led"></span>YouTube</div>
+          <button class="btn" id="btn-yt">Conectar canal</button>
+          <button class="btn btn--ghost btn--sm" id="btn-yt-off">Desconectar</button>
+          <span class="hint" style="color:var(--dim);font-size:12.5px">Precisa do arquivo config/client_secret.json (veja o README). Abre o navegador para autorizar.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Roteiro <small>API do Claude</small></h3>
+        <div class="grid-2">
+          <div class="field"><label>Chave da API (Anthropic)</label><input class="input" data-k="anthropic_api_key" placeholder="sk-ant-…"></div>
+          <div class="field"><label>Modelo</label><input class="input" data-k="claude_model"></div>
+          <div class="field"><label>Duração alvo do short (segundos)</label><input class="input" type="number" data-k="roteiro_duracao_seg" min="20" max="180"></div>
+          <div class="field"><label>Chamada final (CTA)</label><input class="input" data-k="cta"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Narração <small>ElevenLabs</small></h3>
+        <div class="grid-2">
+          <div class="field"><label>Chave da API</label><input class="input" data-k="elevenlabs_api_key"></div>
+          <div class="field"><label>Modelo de voz</label><input class="input" data-k="elevenlabs_model"></div>
+          <div class="field"><label>Voice ID</label>
+            <div class="row"><input class="input" data-k="elevenlabs_voice_id" style="flex:1"><button class="btn btn--sm" id="btn-vozes">Listar minhas vozes</button></div>
+            <select class="input" id="vozes-sel" style="display:none"></select>
+          </div>
+          <div class="field"><label>Privacidade padrão ao publicar</label>
+            <select class="input" data-k="youtube_default_privacy"><option value="private">Privado (rascunho)</option><option value="unlisted">Não listado</option><option value="public">Público</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Radar</h3>
+        <div class="field"><label>Palavras-chave (separadas por vírgula)</label><textarea class="input" data-k="keywords" style="min-height:70px"></textarea></div>
+        <div class="grid-2" style="margin-top:10px">
+          <div class="field"><label>Ler fontes a cada (minutos)</label><input class="input" type="number" data-k="intervalo_minutos" min="3"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Avisos no Telegram <small>opcional</small></h3>
+        <div class="grid-2">
+          <div class="field"><label>Token do bot (@BotFather)</label><input class="input" data-k="telegram_bot_token"></div>
+          <div class="field"><label>Chat ID (@userinfobot)</label><input class="input" data-k="telegram_chat_id"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ===================== EDITOR DA PAUTA ===================== -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Editor da pauta">
+  <div class="drawer__head">
+    <div style="min-width:0">
+      <div class="drawer__meta" id="d-meta"></div>
+      <h2 id="d-title"></h2>
+      <div style="margin-top:6px"><a id="d-link" target="_blank" rel="noopener">Abrir matéria original ↗</a></div>
+    </div>
+    <button class="btn btn--ghost btn--sm drawer__close" id="d-close">Fechar ✕</button>
+  </div>
+  <div class="drawer__body">
+    <div class="step" id="s1">
+      <div class="step__num">1</div>
+      <div class="step__title"><h3>ROTEIRO</h3><button class="btn btn--primary btn--sm" id="btn-roteiro"><span class="spin"></span>Gerar com Claude</button></div>
+      <div class="field"><label>Narração (é isso que a voz vai ler)</label><textarea class="input" id="d-roteiro" placeholder="Gere com o Claude ou escreva aqui."></textarea></div>
+      <div class="field"><label>Título no YouTube</label><input class="input" id="d-titulo" maxlength="100"></div>
+      <div class="field"><label>Descrição</label><textarea class="input" id="d-descricao" style="min-height:80px"></textarea></div>
+      <div class="field"><label>Hashtags (sem #, separadas por vírgula)</label><input class="input" id="d-hashtags"></div>
+      <div class="row" style="margin-top:10px">
+        <label class="switch"><input type="checkbox" id="d-rumor"> Tratar como rumor (selo vermelho no vídeo)</label>
+        <input class="input" id="d-fonte" placeholder="Fonte citada no selo" style="width:220px">
+        <button class="btn btn--sm" id="btn-salvar">Salvar texto</button>
+      </div>
+    </div>
+
+    <div class="step" id="s2">
+      <div class="step__num">2</div>
+      <div class="step__title"><h3>VOZ</h3><button class="btn btn--primary btn--sm" id="btn-voz"><span class="spin"></span>Gerar narração</button></div>
+      <div class="hint" style="color:var(--muted);font-size:13.5px">Gera o áudio no ElevenLabs e as legendas sincronizadas. Se mudar o roteiro, gere de novo.</div>
+      <div class="preview" id="d-audio" style="display:none"></div>
+    </div>
+
+    <div class="step" id="s3">
+      <div class="step__num">3</div>
+      <div class="step__title"><h3>VÍDEO</h3><button class="btn btn--primary btn--sm" id="btn-video"><span class="spin"></span>Montar short</button></div>
+      <div class="field"><label>Imagem de fundo (clipe curto ou print — ou o fundo padrão)</label>
+        <div class="row">
+          <select class="input" id="d-clip" style="flex:1"><option value="">Fundo padrão (sem clipe)</option></select>
+          <label class="btn btn--sm">Enviar arquivo<input type="file" id="d-upload" accept="video/*,image/*" hidden></label>
+        </div>
+        <div class="hint" style="color:var(--dim)">Coloque os arquivos também direto na pasta media/clips. Poucos segundos de trailer bastam — o áudio do clipe é descartado, só a sua narração entra.</div>
+      </div>
+      <div class="preview" id="d-video" style="display:none"></div>
+    </div>
+
+    <div class="step" id="s4">
+      <div class="step__num">4</div>
+      <div class="step__title"><h3>PUBLICAR</h3><small id="d-quota"></small></div>
+      <div class="grid-2">
+        <div class="field"><label>Privacidade</label>
+          <select class="input" id="d-priv"><option value="private">Privado (rascunho no Studio)</option><option value="unlisted">Não listado</option><option value="public">Público agora</option></select>
+        </div>
+        <div class="field"><label>Agendar para (opcional)</label><input class="input" type="datetime-local" id="d-agenda"></div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="btn-aprovar">Marcar como aprovado</button>
+        <button class="btn btn--primary" id="btn-publicar"><span class="spin"></span>Enviar ao YouTube</button>
+      </div>
+      <div id="d-pub"></div>
+    </div>
+    <div class="err" id="d-erro"></div>
+  </div>
+  <div class="drawer__foot">
+    <span id="d-status" class="tag"></span>
+    <button class="btn btn--danger btn--sm" id="btn-excluir">Excluir pauta</button>
+  </div>
+</aside>
+
+<div class="toasts" id="toasts"></div>
+<script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+config/settings.json
+config/client_secret.json
+config/youtube_token.json
+config/newsroom.db
+media/clips/*
+media/audio/*
+media/video/*
+media/overlays/*
+media/legendas/*
+!media/**/.gitkeep

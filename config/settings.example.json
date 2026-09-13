@@ -1,0 +1,17 @@
+{
+  "anthropic_api_key": "sk-ant-...",
+  "claude_model": "claude-sonnet-5",
+  "elevenlabs_api_key": "...",
+  "elevenlabs_voice_id": "...",
+  "elevenlabs_model": "eleven_multilingual_v2",
+  "youtube_client_secret_path": "config/client_secret.json",
+  "youtube_default_privacy": "private",
+  "canal_nome": "Meu canal",
+  "canal_handle": "@meucanal",
+  "cta": "Segue o canal pra não perder nada de GTA 6.",
+  "roteiro_duracao_seg": 55,
+  "keywords": ["GTA 6", "GTA VI", "GTA6", "Grand Theft Auto VI", "Grand Theft Auto 6", "Rockstar", "Take-Two", "Vice City", "Leonida"],
+  "intervalo_minutos": 15,
+  "telegram_bot_token": "",
+  "telegram_chat_id": ""
+}
