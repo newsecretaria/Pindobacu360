@@ -1,39 +1,50 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { PropsShort } from "../tipos";
+import { interpolate, useCurrentFrame } from "remotion";
+import type { Paleta } from "../tipos";
 
-/** Faixa com a categoria em caixa alta, entra deslizando na abertura. */
+/**
+ * O bloco de categoria — a assinatura do formato.
+ *
+ * Ele nao flutua sobre a foto: fica pousado exatamente na emenda entre a foto
+ * e o campo de tinta, metade em cima de cada um. E o unico elemento que
+ * atravessa a divisao do layout, e e o que faz o frame ser reconhecivel como
+ * deste perfil. Entra como pincelada, da esquerda para a direita.
+ */
 export const FaixaCategoria: React.FC<{
   categoria: string;
-  cores: PropsShort["cores"];
+  cores: Paleta;
+  destaque: string;
   pilhaFonte: string;
-}> = ({ categoria, cores, pilhaFonte }) => {
+  /** Frames de atraso antes da pincelada */
+  atraso?: number;
+}> = ({ categoria, cores, destaque, pilhaFonte, atraso = 0 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
 
-  const entrada = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 18 });
-  const x = interpolate(entrada, [0, 1], [-420, 0]);
+  const pincelada = interpolate(frame - atraso, [0, 14], [0, 100], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: (t) => 1 - Math.pow(1 - t, 3),
+  });
 
   return (
     <div
       style={{
         alignSelf: "flex-start",
-        transform: `translateX(${x}px)`,
-        opacity: entrada,
-        backgroundColor: cores.fundoFaixa,
-        padding: "14px 34px",
-        borderRadius: 12,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.45)",
+        backgroundColor: destaque,
+        padding: "16px 30px 14px",
+        clipPath: `inset(0 ${100 - pincelada}% 0 0)`,
       }}
     >
       <span
         style={{
           fontFamily: pilhaFonte,
-          fontWeight: 900,
-          fontSize: 40,
-          letterSpacing: 4,
-          color: cores.texto,
+          fontVariationSettings: '"wdth" 76, "wght" 800',
+          fontSize: 38,
+          lineHeight: 1,
+          letterSpacing: 5,
+          color: cores.tinta,
           textTransform: "uppercase",
+          display: "block",
         }}
       >
         {categoria}

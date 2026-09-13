@@ -62,8 +62,39 @@ painel).
 ## Antes de usar de verdade
 
 - Coloque o logo do @pindobacu360 (PNG transparente) em `assets/logo/`.
-- Coloque fotos/vídeos da cidade em `assets/fundos/<categoria>/`.
-- Ajuste as cores da marca e a fonte tipográfica em "Configurações" no
-  painel (ou direto em `src/config.ts`).
+  Sem logo, entra uma barra na cor da notícia no lugar dele.
+- Coloque fotos/vídeos da cidade em `assets/fundos/<categoria>/`. É a
+  mudança que mais melhora o resultado: sem foto, o topo do vídeo é cor
+  chapada.
+- Ajuste as cores da marca em "Configurações" no painel (ou direto em
+  `src/config.ts`). As atuais são provisórias.
 - Revise a lista de portais/sites em "Configurações" — os que vêm no
   código são só exemplos.
+
+## Sobre o desenho do vídeo
+
+O template não é um fundo com texto por cima. A estrutura é uma divisão
+editorial: foto em cima, campo de tinta embaixo, e o bloco da categoria
+pousado exatamente na emenda entre os dois — é o elemento que faz o frame
+ser reconhecível como deste perfil.
+
+Decisões que valem saber antes de mexer:
+
+- **Tipografia**: Archivo (Omnibus-Type, licença SIL OFL, incluída em
+  `assets/fontes/`). É uma grotesca latino-americana feita para manchete e
+  texto, com eixo de largura variável — a manchete usa a versão expandida
+  preta, as frases a normal. O arquivo vai junto no repositório de
+  propósito: sem ele o vídeo cai na fonte do sistema e perde a identidade.
+- **Três cores, não dez**: cada categoria herda um tom que diz o tipo de
+  notícia — ocre para o dia a dia, verde para serviço (saúde, educação,
+  clima), vermelho para o que pede atenção (segurança, política).
+- **Duotone nas fotos**: toda foto passa pelo mesmo tratamento na cor da
+  notícia. Isso resolve um problema prático — as fotos vão ter luz e
+  câmera muito diferentes entre si, e o tratamento faz o perfil ter uma
+  cara só, além de garantir contraste com o texto.
+- **O texto sobe de trás de uma máscara**, linha por linha, em vez de
+  aparecer com opacidade. É o que separa uma peça animada de um template
+  com fade.
+- **A quebra de linha é decidida no código**, não pelo navegador, porque
+  cada linha precisa ser um elemento próprio para a cascata funcionar. O
+  corpo da letra diminui sozinho até caber na largura e na altura úteis.

@@ -1,68 +1,70 @@
 import React from "react";
 import { Img, staticFile } from "remotion";
-import type { PropsShort } from "../tipos";
+import type { Paleta } from "../tipos";
 
 /**
- * Cabecalho fixo do perfil, presente do primeiro ao ultimo frame.
- * Fica dentro da margem segura do topo.
+ * Assinatura do perfil, presente do primeiro ao ultimo frame.
+ *
+ * Nao e um cartao flutuante com avatar redondo (isso e cromo de aplicativo,
+ * igual em qualquer perfil): e uma marca alinhada a esquerda, no mesmo eixo
+ * do texto, com uma barra pintada na cor da noticia.
  */
 export const Cabecalho: React.FC<{
   logoArquivo: string | null;
   perfilNome: string;
   perfilArroba: string;
-  cores: PropsShort["cores"];
+  cores: Paleta;
+  destaque: string;
   pilhaFonte: string;
-}> = ({ logoArquivo, perfilNome, perfilArroba, cores, pilhaFonte }) => {
+  margem: number;
+  /** true quando o topo do frame é cor chapada clara (nenhuma foto na pasta) */
+  sobreClaro: boolean;
+}> = ({
+  logoArquivo,
+  perfilNome,
+  perfilArroba,
+  cores,
+  destaque,
+  pilhaFonte,
+  margem,
+  sobreClaro,
+}) => {
+  // Sobre ocre chapado a assinatura vira tinta; sobre foto escurecida, osso.
+  const corNome = sobreClaro ? cores.tinta : cores.osso;
+  const corArroba = sobreClaro ? "rgba(22,19,15,0.72)" : destaque;
+  const corBarra = sobreClaro ? cores.tinta : destaque;
+
   return (
     <div
       style={{
         position: "absolute",
-        top: 56,
-        left: 56,
-        right: 56,
-        height: 110,
+        top: 76,
+        left: margem,
+        right: margem,
         display: "flex",
         alignItems: "center",
-        gap: 24,
-        padding: "0 28px",
-        borderRadius: 24,
-        backgroundColor: "rgba(0,0,0,0.42)",
-        border: `3px solid ${cores.primaria}`,
+        gap: 22,
       }}
     >
       {logoArquivo ? (
         <Img
           src={staticFile(logoArquivo)}
-          style={{ width: 76, height: 76, objectFit: "contain" }}
+          style={{ height: 64, width: "auto", objectFit: "contain" }}
         />
       ) : (
-        <div
-          style={{
-            width: 76,
-            height: 76,
-            borderRadius: 38,
-            backgroundColor: cores.primaria,
-            color: cores.texto,
-            fontFamily: pilhaFonte,
-            fontWeight: 900,
-            fontSize: 34,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          P
-        </div>
+        <div style={{ width: 12, height: 58, backgroundColor: corBarra }} />
       )}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <span
           style={{
             fontFamily: pilhaFonte,
-            fontWeight: 900,
-            fontSize: 36,
-            color: cores.texto,
-            letterSpacing: -0.5,
+            fontVariationSettings: '"wdth" 118, "wght" 800',
+            fontSize: 34,
+            lineHeight: 1,
+            letterSpacing: -0.4,
+            color: corNome,
+            textTransform: "uppercase",
           }}
         >
           {perfilNome}
@@ -70,9 +72,12 @@ export const Cabecalho: React.FC<{
         <span
           style={{
             fontFamily: pilhaFonte,
-            fontWeight: 700,
-            fontSize: 28,
-            color: cores.destaque,
+            fontVariationSettings: '"wdth" 78, "wght" 600',
+            fontSize: 25,
+            lineHeight: 1,
+            letterSpacing: 3.4,
+            color: corArroba,
+            textTransform: "uppercase",
           }}
         >
           {perfilArroba}

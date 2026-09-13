@@ -47,14 +47,36 @@ export type Config = {
     arroba: string;
     url: string;
   };
-  /** Cores da marca — Ricardo confirma os hex definitivos */
+  /**
+   * Paleta da marca — terra e sol do Piemonte da Diamantina, não azul de
+   * dark mode. Ricardo confirma os hex definitivos.
+   */
   cores: {
-    primaria: string;
-    secundaria: string;
-    texto: string;
-    fundoFaixa: string;
-    destaque: string;
+    /** Preto quente de tinta — o campo onde o texto vive */
+    tinta: string;
+    /** Branco-osso do texto (mais suave que #FFF numa tela à noite) */
+    osso: string;
+    /** Cinza pedra, para texto secundário */
+    pedra: string;
+    /** Ocre de sol */
+    sol: string;
+    /** Verde de caatinga depois da chuva */
+    serra: string;
+    /** Vermelho de laterita */
+    terra: string;
   };
+  /**
+   * Cada categoria herda um dos três tons de destaque. Não é enfeite: o tom
+   * diz o tipo de notícia — sol é o dia a dia, serra é serviço, terra é
+   * atenção. Três cores só, para o perfil manter uma cara reconhecível.
+   */
+  tomPorCategoria: Record<Categoria, "sol" | "serra" | "terra">;
+  /**
+   * Como a categoria aparece escrita no vídeo. As chaves são sem acento
+   * (servem de identificador), mas na tela precisa sair acentuado — "SAUDE"
+   * sem acento lê como erro de digitação para quem assiste.
+   */
+  rotulosCategoria: Record<Categoria, string>;
   fonteTipografica: {
     /** Arquivo em assets/fontes/ (opcional). Se existir, e carregado no video. */
     arquivo?: string;
@@ -99,6 +121,11 @@ export type Config = {
     /** Margens seguras do Instagram, em pixels */
     margemTopo: number;
     margemRodape: number;
+    /**
+     * Altura da foto, de 0 a 1. Abaixo dessa linha começa o campo de tinta
+     * onde o texto vive — a emenda dura entre os dois é o eixo do layout.
+     */
+    emenda: number;
   };
 };
 
@@ -109,21 +136,48 @@ export const configPadrao: Config = {
     url: "https://instagram.com/pindobacu360",
   },
 
-  // Cores provisorias: verde/azul da bandeira da regiao. Ricardo troca pelos hex oficiais.
+  // Provisorias: terra, sol e caatinga. Ricardo troca pelos hex oficiais.
   cores: {
-    primaria: "#0B6E4F",
-    secundaria: "#0A2342",
-    texto: "#FFFFFF",
-    fundoFaixa: "#0B6E4F",
-    destaque: "#F2C14E",
+    tinta: "#16130F",
+    osso: "#F4EFE6",
+    pedra: "#8A8378",
+    sol: "#E9A227",
+    serra: "#2F5D45",
+    terra: "#A8371D",
+  },
+
+  tomPorCategoria: {
+    cidade: "sol",
+    cultura: "sol",
+    esporte: "sol",
+    economia: "sol",
+    geral: "sol",
+    saude: "serra",
+    educacao: "serra",
+    clima: "serra",
+    seguranca: "terra",
+    politica: "terra",
+  },
+
+  rotulosCategoria: {
+    cidade: "Cidade",
+    saude: "Saúde",
+    educacao: "Educação",
+    clima: "Clima",
+    seguranca: "Segurança",
+    esporte: "Esporte",
+    cultura: "Cultura",
+    politica: "Política",
+    economia: "Economia",
+    geral: "Geral",
   },
 
   fonteTipografica: {
-    // Coloque um .ttf/.otf em assets/fontes/ e escreva o nome do arquivo aqui.
-    // Ex.: arquivo: "Montserrat-Black.ttf"
-    arquivo: undefined,
-    pilha:
-      '"Montserrat", "Inter", "Arial Black", "Helvetica Neue", Arial, sans-serif',
+    // Archivo (Omnibus-Type, licenca SIL OFL): grotesca latino-americana
+    // feita para manchete e texto, com eixo de largura variavel — a manchete
+    // usa a versao expandida preta, as frases a normal.
+    arquivo: "Archivo-Variable.woff2",
+    pilha: '"Archivo", "Helvetica Neue", Arial, sans-serif',
   },
 
   regiao: {
@@ -228,10 +282,11 @@ export const configPadrao: Config = {
     altura: 1920,
     fps: 30,
     segundosPorFrase: 3.5,
-    segundosAbertura: 2,
-    segundosManchete: 3,
+    segundosAbertura: 1.6,
+    segundosManchete: 3.4,
     segundosFechamento: 2.5,
     margemTopo: 180,
     margemRodape: 350,
+    emenda: 0.54,
   },
 };

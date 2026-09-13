@@ -34,10 +34,13 @@ const BIN_REMOTION = path.join(
 export function montarProps(noticia: Noticia, config: Config): PropsShort {
   const categoria = noticia.categoria ?? "geral";
   const pastaFundo = noticia.fundo ?? categoria;
+  // O tom sai da categoria: sol para o dia a dia, serra para servico,
+  // terra para o que pede atencao.
+  const tom = config.tomPorCategoria[categoria] ?? "sol";
   return {
     manchete: noticia.manchete ?? noticia.titulo,
     frases: noticia.frases,
-    categoria,
+    categoria: config.rotulosCategoria[categoria] ?? categoria,
     fonte: noticia.fonte,
     fundoArquivo: escolherFundo(pastaFundo),
     logoArquivo: encontrarLogo(),
@@ -45,9 +48,11 @@ export function montarProps(noticia: Noticia, config: Config): PropsShort {
     perfilNome: config.perfil.nome,
     perfilArroba: config.perfil.arroba,
     cores: config.cores,
+    destaque: config.cores[tom],
     pilhaFonte: config.fonteTipografica.pilha,
     margemTopo: config.video.margemTopo,
     margemRodape: config.video.margemRodape,
+    emenda: config.video.emenda,
     tempos: {
       abertura: config.video.segundosAbertura,
       manchete: config.video.segundosManchete,

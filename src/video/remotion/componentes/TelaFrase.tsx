@@ -1,78 +1,116 @@
 import React from "react";
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import type { PropsShort } from "../tipos";
+import { interpolate, useCurrentFrame } from "remotion";
+import { ajustarFrase, type Paleta } from "../tipos";
 
-/** Uma frase do resumo por tela, com entrada e saida suaves. */
+/**
+ * Uma frase do resumo por tela, no mesmo campo de tinta onde a manchete
+ * estava — a arquitetura nao muda entre as telas, so o conteudo. E o que faz
+ * o video parecer uma peca so, e nao slides emendados.
+ *
+ * O progresso e uma regua fina que avanca, nao as bolinhas de stories: as
+ * bolinhas sao a interface do proprio Instagram, e copia-las e o caminho
+ * mais curto para parecer generico.
+ */
 export const TelaFrase: React.FC<{
   texto: string;
   indice: number;
   total: number;
   duracao: number;
-  cores: PropsShort["cores"];
+  cores: Paleta;
+  destaque: string;
   pilhaFonte: string;
-}> = ({ texto, indice, total, duracao, cores, pilhaFonte }) => {
+  larguraUtil: number;
+  alturaUtil: number;
+}> = ({
+  texto,
+  indice,
+  total,
+  duracao,
+  cores,
+  destaque,
+  pilhaFonte,
+  larguraUtil,
+  alturaUtil,
+}) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { tamanho, linhas, alturaLinha } = ajustarFrase(
+    texto,
+    larguraUtil,
+    alturaUtil,
+  );
 
-  const entrada = spring({
-    frame,
-    fps,
-    config: { damping: 18, mass: 0.7 },
-    durationInFrames: 20,
-  });
-  const saida = interpolate(frame, [duracao - 10, duracao], [1, 0], {
+  const saida = interpolate(frame, [duracao - 8, duracao], [0, -26], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const y = interpolate(entrada, [0, 1], [48, 0]);
+  const opacidadeSaida = interpolate(frame, [duracao - 8, duracao], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+  // A regua acumula as telas ja lidas e preenche a atual em tempo real.
+  const nesta = interpolate(frame, [0, duracao], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const progresso = ((indice + nesta) / total) * 100;
 
   return (
     <div
       style={{
-        opacity: Math.min(entrada, saida),
-        transform: `translateY(${y}px)`,
-        maxWidth: 920,
         display: "flex",
         flexDirection: "column",
-        gap: 28,
+        gap: 46,
+        transform: `translateY(${saida}px)`,
+        opacity: opacidadeSaida,
       }}
     >
-      <div
-        style={{
-          backgroundColor: "rgba(0,0,0,0.55)",
-          borderLeft: `10px solid ${cores.destaque}`,
-          borderRadius: 18,
-          padding: "34px 38px",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: pilhaFonte,
-            fontWeight: 800,
-            fontSize: texto.length > 70 ? 56 : 64,
-            lineHeight: 1.22,
-            color: cores.texto,
-            textShadow: "0 4px 16px rgba(0,0,0,0.7)",
-          }}
-        >
-          {texto}
-        </span>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {linhas.map((linha, i) => {
+          const subida = interpolate(frame - i * 3, [0, 15], [100, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: (t) => 1 - Math.pow(1 - t, 4),
+          });
+          return (
+            <div
+              key={i}
+              style={{ height: alturaLinha, overflow: "hidden" }}
+            >
+              <span
+                style={{
+                  display: "block",
+                  fontFamily: pilhaFonte,
+                  fontVariationSettings: '"wdth" 100, "wght" 500',
+                  fontSize: tamanho,
+                  lineHeight: `${alturaLinha}px`,
+                  letterSpacing: -0.2,
+                  color: cores.osso,
+                  transform: `translateY(${subida}%)`,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {linha}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Marcadores de progresso: quantas telas ja passaram */}
-      <div style={{ display: "flex", gap: 12 }}>
-        {Array.from({ length: total }).map((_, i) => (
-          <div
-            key={i}
-            style={{
-              width: i === indice ? 64 : 28,
-              height: 10,
-              borderRadius: 5,
-              backgroundColor:
-                i <= indice ? cores.destaque : "rgba(255,255,255,0.35)",
-            }}
-          />
-        ))}
+      <div
+        style={{
+          height: 4,
+          width: 420,
+          backgroundColor: "rgba(244,239,230,0.18)",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${progresso}%`,
+            backgroundColor: destaque,
+          }}
+        />
       </div>
     </div>
   );

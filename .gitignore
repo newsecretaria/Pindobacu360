@@ -16,4 +16,8 @@ assets/musicas/*
 !assets/musicas/.gitkeep
 assets/fontes/*
 !assets/fontes/.gitkeep
+!assets/fontes/*.woff2
+!assets/fontes/*.ttf
+!assets/fontes/*.otf
+!assets/fontes/OFL.txt
 .DS_Store
