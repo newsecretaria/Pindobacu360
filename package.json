@@ -1,0 +1,45 @@
+{
+  "name": "pindobacu-shorts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Coleta, cura e transforma noticias de Pindobacu-BA e regiao em shorts verticais para o @pindobacu360",
+  "scripts": {
+    "dev": "tsx watch --clear-screen=false src/index.ts",
+    "start": "tsx src/index.ts",
+    "coletar": "tsx src/scripts/coletar.ts",
+    "curar": "tsx src/scripts/curar.ts",
+    "render": "tsx src/scripts/render.ts",
+    "exemplo": "tsx src/scripts/exemplo.ts",
+    "build:web": "vite build src/painel/web",
+    "remotion:studio": "remotion studio src/video/remotion/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.125.0",
+    "@remotion/cli": "^4.0.524",
+    "better-sqlite3": "^13.0.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "node-cron": "^4.6.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.524",
+    "rss-parser": "^3.13.0",
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.5.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react-swc": "^4.3.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}
